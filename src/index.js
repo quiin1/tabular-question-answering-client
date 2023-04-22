@@ -10,7 +10,7 @@ function MyApp() {
     <>
       <title>Tapex Chatbot</title>
       <meta
-        http-equiv="Content-Security-Policy"
+        httpEquiv="Content-Security-Policy"
         content="upgrade-insecure-requests"
       />
       <div className="flex flex-col overflow-hidden">
