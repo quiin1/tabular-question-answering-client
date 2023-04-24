@@ -32,7 +32,7 @@ export default function TableDisplay({table, setTable}) {
                     id="urlBtn" 
                     className="btn btn-outline-secondary" 
                     type="button"
-                    onClick={loadTable()}
+                    onClick={e => loadTable()}
                 >
                     random
                 </button>
