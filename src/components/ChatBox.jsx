@@ -1,33 +1,63 @@
 import { useState } from 'react'
 import { predict } from '../response';
-import request from '../request';
 
-function Messages() {
+function Messages( { conversation }) {
     return (
-        <div className="h-full">Messages here</div>
+        <div className="flex flex-col flex-grow h-full">
+            {conversation.map((content, index) => {
+                if (index % 2 === 0) {
+                    return (
+                        <div className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
+                            <div>
+                                <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
+                                    <p className="text-sm" style={{margin: 0}}>{content}</p>
+                                </div>
+                            </div>
+                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+                        </div>
+                    )
+                } else {
+                    return (
+                        <div className="flex w-full mt-2 space-x-3 max-w-xs">
+                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+                            <div>
+                                <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+                                    <p className="text-sm" style={{margin: 0}}>{content}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+            })}
+        </div>
     );
 }
 
-export default function ChatBox() {
+export default function ChatBox({table}) {
     const [query, setQuery] = useState('')
+    const [conversation, setConversation] = useState([])
 
     const handleChange = event => {
         setQuery(event.target.value)
     };
     const handleClick = () => {
-        request["query"] = query
-        if (request["query"] != "" || request["table"] != "") {
+        if (query !== "" && table) {
+            let request = {
+                query: query,
+                table: table
+            }
             predict(request).then(function(data) {
-                console.log(data)
-            }) 
+                setConversation([...conversation, query, data[0]])
+            })
+            setQuery('')
         }
     }
     return (
         <div 
-            style={{ height: '80vh' }}
+            style={{ height: '70vh' }}
             className="flex flex-col"
         >
-            <Messages/>
+            <Messages conversation={conversation}/>
             <div className="flex items-center">
                 <textarea 
                     type="text" 
@@ -48,6 +78,7 @@ export default function ChatBox() {
                     placeholder="Ask me a question..." 
                     rows="1" 
                     onChange={handleChange}
+                    value={query}
                 >
                 </textarea>
                 <div className="flex ml-1 ms-auto">

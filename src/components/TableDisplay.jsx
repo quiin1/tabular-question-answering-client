@@ -1,56 +1,21 @@
-import {Table, Form, InputGroup} from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import request from '../request';
-
+import {Form, InputGroup} from 'react-bootstrap'
+import '../styles/table.css'
 
 async function load(link) {
     let conn = await fetch(link);
     let data = await conn.json();
     let index = Math.round(Math.random() * data.data.length);
-    console.log(index)
-    console.log(data.data[index].table_array)
     return data.data[index].table_array;
 }
 
-function loadLink(e) {
-    let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_dev.json'
-    load(link).then((tableArray) => {
-        request["table"] = tableArray
-        let table =  document.getElementById('table')
-        let head = document.createElement("thead")
-        let body = document.createElement("tbody")
-        table.innerHTML = ''
-        head.innerHTML = ''
-        body.innerHTML = ''
-        table.appendChild(head)
-        table.appendChild(body)
-        tableArray.forEach((row, index) => {
-            if (index == 0) {
-                head.innerHTML = (`
-                    <tr>
-                        <th>#</th>
-                        ${Array.from(row).map((heading, index) => (
-                            `<th key=${index}>${heading}</th>`
-                        ))}
-                    </tr>
-                `)
-            }
-            else {
-                body.innerHTML += (`
-                    <tr>
-                        <td>${index}</td>
-                        ${Array.from(row).map((content, index) => (
-                            `<td key=${index}>${content}</td>`
-                        ))}
-                    </tr>
-                `)
-            }
+
+export default function TableDisplay({table, setTable}) {
+    function loadLink(e) {
+        let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_dev.json'
+        load(link).then((tableArray) => {
+            setTable(tableArray)
         })
-    })
-}
-
-
-export default function TableDisplay() {
+    }
     return (
         <>
             <InputGroup className="mb-3">
@@ -72,9 +37,40 @@ export default function TableDisplay() {
                     random
                 </button>
             </InputGroup>
-
-            <Table id="table" responsive>
-            </Table>
+            <div className="mt-4">
+                <div className="overflow-auto">
+                    {table &&
+                    <table className="table-question-answering">
+                        {table.map((row, index) => {
+                            if (index === 0) {
+                                return (
+                                    <thead key={index}>
+                                        <tr>
+                                            <th>#</th>
+                                            {Array.from(row).map((heading, hindex) => (
+                                                <th key={hindex} className="border-2 border-gray-100 h-6">{heading}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                )
+                            } else {
+                                return (
+                                    <tbody key={index}>
+                                        <tr className="bg-white">
+                                            <td>{index}</td>
+                                                {Array.from(row).map((content, dindex) => (
+                                                    <td key={dindex} className="border-gray-100 border-2 h-6">{content}</td>
+                                                ))}
+                                            </tr>
+                                    </tbody>
+                                    )
+                                }
+                            })
+                        }
+                    </table>
+                    }
+                </div>
+            </div>
         </>
     )
 }

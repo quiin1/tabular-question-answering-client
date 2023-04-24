@@ -1,0 +1,19 @@
+table.table-question-answering {
+    min-width: 100%;
+    table-layout: auto;
+}
+table.table-question-answering th {
+    --tw-border-opacity: 1;
+    border-color: rgb(243 244 246/var(--tw-border-opacity));
+    border-width: 1px;
+    font-weight: 700;
+    padding: 0.5rem;
+    position: relative;
+    white-space: nowrap;
+}
+table.table-question-answering td {
+    --tw-border-opacity: 1;
+    border-color: rgb(243 244 246/var(--tw-border-opacity));
+    border-width: 1px;
+    padding: 0.5rem;
+}
