@@ -1,10 +1,27 @@
+import { useState } from 'react'
+import { predict } from '../response';
+import request from '../request';
+
 function Messages() {
     return (
-        <div className="h-full">messages here</div>
+        <div className="h-full">Messages here</div>
     );
 }
 
 export default function ChatBox() {
+    const [query, setQuery] = useState('')
+
+    const handleChange = event => {
+        setQuery(event.target.value)
+    };
+    const handleClick = () => {
+        request["query"] = query
+        if (request["query"] != "" || request["table"] != "") {
+            predict(request).then(function(data) {
+                console.log(data)
+            }) 
+        }
+    }
     return (
         <div 
             style={{ height: '80vh' }}
@@ -14,7 +31,7 @@ export default function ChatBox() {
             <div className="flex items-center">
                 <textarea 
                     type="text" 
-                    name="lname" 
+                    name="query" 
                     className="
                         bg-gray-100 
                         resize-none 
@@ -30,6 +47,7 @@ export default function ChatBox() {
                     "
                     placeholder="Ask me a question..." 
                     rows="1" 
+                    onChange={handleChange}
                 >
                 </textarea>
                 <div className="flex ml-1 ms-auto">
@@ -47,6 +65,7 @@ export default function ChatBox() {
                         " 
                         alt="Submit" 
                         data-state="closed"
+                        onClick={handleClick}
                     >
                         <svg 
                             xmlns="http://www.w3.org/2000/svg" 

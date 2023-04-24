@@ -1,5 +1,7 @@
 import {Table, Form, InputGroup} from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import request from '../request';
+
 
 async function load(link) {
     let conn = await fetch(link);
@@ -13,6 +15,7 @@ async function load(link) {
 function loadLink(e) {
     let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_dev.json'
     load(link).then((tableArray) => {
+        request["table"] = tableArray
         let table =  document.getElementById('table')
         let head = document.createElement("thead")
         let body = document.createElement("tbody")
@@ -45,6 +48,7 @@ function loadLink(e) {
         })
     })
 }
+
 
 export default function TableDisplay() {
     return (
