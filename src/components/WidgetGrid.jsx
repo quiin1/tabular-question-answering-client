@@ -17,7 +17,7 @@ function CardSample({ title, children }) {
 export default function WidgetGrid() {
     const [table, setTable] = useState()
     return(
-        <Row xs={1} md={2} className="g-3 px-3">
+        <Row xs={1} md={2} className="g-3 px-3 overflow-hidden">
             <Col>
                 <CardSample title={"Table"}>
                     <TableDisplay table={table} setTable={setTable}/>

@@ -37,10 +37,18 @@ export default function TableDisplay({table, setTable}) {
                     random
                 </button>
             </InputGroup>
-            <div className="mt-4">
-                <div className="overflow-auto">
+            <div 
+                id="tableContainer"
+                className="
+                    mt-4
+                    overflow-auto
+                "
+            >
+                <div>
                     {table &&
-                    <table className="table-question-answering">
+                    <table 
+                        className="table-question-answering"
+                    >
                         {table.map((row, index) => {
                             if (index === 0) {
                                 return (

@@ -1,3 +1,7 @@
+#tableContainer {
+    max-height: 70vh;
+}
+
 table.table-question-answering {
     min-width: 100%;
     table-layout: auto;
