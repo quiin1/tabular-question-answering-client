@@ -11,7 +11,7 @@ async function randomTableArray(link) {
 }
 
 export default function TableDisplay({table, setTable}) {
-    function loadTable() {
+    function loadNewTable() {
         randomTableArray(link).then((tableArray) => {
             setTable(tableArray)
         })
@@ -32,7 +32,7 @@ export default function TableDisplay({table, setTable}) {
                     id="urlBtn" 
                     className="btn btn-outline-secondary" 
                     type="button"
-                    onClick={e => loadTable()}
+                    onClick={e => loadNewTable()}
                 >
                     random
                 </button>

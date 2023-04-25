@@ -1,7 +1,7 @@
+import { useState } from 'react'
 import {Row, Col, Card} from "react-bootstrap"
 import TableDisplay from "./TableDisplay";
 import ChatBox from "./ChatBox"
-import { useState } from 'react'
 
 function CardSample({ title, children }) {
     return (
