@@ -3,11 +3,11 @@ import { predict } from '../response';
 
 function Messages( { conversation }) {
     return (
-        <div className="flex flex-col flex-grow h-full">
+        <div className="flex flex-col flex-grow overflow-auto mt-2 py-4 px-2 rounded-md">
             {conversation.map((content, index) => {
                 if (index % 2 === 0) {
                     return (
-                        <div className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
+                        <div key={index} className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
                             <div>
                                 <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
                                     <p className="text-sm" style={{margin: 0}}>{content}</p>
@@ -18,7 +18,7 @@ function Messages( { conversation }) {
                     )
                 } else {
                     return (
-                        <div className="flex w-full mt-2 space-x-3 max-w-xs">
+                        <div key={index} className="flex w-full mt-2 space-x-3 max-w-xs">
                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
                             <div>
                                 <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
@@ -52,13 +52,21 @@ export default function ChatBox({table}) {
             setQuery('')
         }
     }
+    
+    const handleKeyDown = (e) => {
+        if (e.key==='Enter') {
+            e.preventDefault();
+            handleClick()
+        }
+    }
+
     return (
         <div 
-            style={{ height: '70vh' }}
+            style={{ height: '78.3vh' }}
             className="flex flex-col"
         >
-            <Messages conversation={conversation}/>
-            <div className="flex items-center">
+            <Messages conversation={conversation} className="h-full"/>
+            <div className="flex justify-items-center items-center pt-3">
                 <textarea 
                     type="text" 
                     name="query" 
@@ -97,6 +105,8 @@ export default function ChatBox({table}) {
                         alt="Submit" 
                         data-state="closed"
                         onClick={handleClick}
+                        tabIndex="0"
+                        onKeyDown={e => handleKeyDown(e)}
                     >
                         <svg 
                             xmlns="http://www.w3.org/2000/svg" 
