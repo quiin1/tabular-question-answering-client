@@ -1,5 +1,6 @@
 import {Form, InputGroup} from 'react-bootstrap'
 import '../styles/table.css'
+import * as XLSX from 'xlsx/xlsx.mjs'
 
 let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_dev.json'
 
@@ -16,6 +17,89 @@ export default function TableDisplay({table, setTable}) {
             setTable(tableArray)
         })
     }
+
+    function upload() {
+        var files = document.getElementById('file_upload').files;
+        if(files.length==0){
+          alert("Please choose any file...");
+          return;
+        }
+        var filename = files[0].name;
+        var extension = filename.substring(filename.lastIndexOf(".")).toUpperCase();
+        if (extension == '.XLS' || extension == '.XLSX') {
+            excelFileToJSON(files[0]);
+        }else if (extension == '.CSV') {
+            csvFileToJSON(files[0]);
+        } else {
+            alert("Please select a valid excel file.");
+        }
+    }
+
+    function excelFileToJSON(file){
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+        reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+                type : 'binary'
+            });
+            var result;
+            var first_sheet_name = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[first_sheet_name];
+            var roa = XLSX.utils.sheet_to_row_object_array(worksheet);
+            if (roa.length > 0) {
+                result = roa;
+            }
+            const propertyNames = Object.keys(result[0]);
+            var resultEle = [];
+            resultEle.push(propertyNames);
+            for (var i = 0; i < result.length; i++) {
+                const propertyNames = Object.values(result[i]);
+                resultEle.push(propertyNames);
+            }
+            console.log(resultEle);
+            setTable(resultEle);
+        }
+    }
+
+    function csvFileToJSON(file){
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+        reader.onload = function(e) {
+            var jsonData = [];
+            var headers = [];
+            var rows = e.target.result.split("\r\n");
+            var cells = rows[0].split(",");   
+            for(var j=0;j<cells.length;j++){
+                var headerName = cells[j].trim();
+                headers.push(headerName);
+            }
+            jsonData.push(headers);
+            for (var i = 1; i < rows.length; i++) {
+                cells = rows[i].split(",");
+                var rowData = {};
+                for(var j=0;j<cells.length;j++){
+                    if(i==0){
+                    var headerName = cells[j].trim();
+                    headers.push(headerName);
+                    }else{
+                        var key = headers[j];
+                        if(key){
+                            rowData[key] = cells[j].trim();
+                        }
+                    }
+                }
+                if(i!=0){
+                    const propertyNames = Object.values(rowData);
+                    jsonData.push(propertyNames);
+                }
+            }
+            jsonData.splice(jsonData.length - 1, 1);
+            console.log(jsonData);
+            setTable(jsonData);
+        }
+    }
+
     return (
         <>
             <InputGroup className="mb-3">
@@ -36,6 +120,17 @@ export default function TableDisplay({table, setTable}) {
                 >
                     random
                 </button>
+                <div className="file">
+                    <input type="file" id="file_upload" />
+                    <button 
+                        id="urlBtn" 
+                        className="btn btn-outline-secondary" 
+                        type="button"
+                        onClick={e => upload()}
+                    >
+                        upload
+                    </button>
+                </div>
             </InputGroup>
             <div 
                 id="tableContainer"
