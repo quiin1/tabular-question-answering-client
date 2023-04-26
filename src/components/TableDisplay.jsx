@@ -104,7 +104,7 @@ export default function TableDisplay({table, setTable}) {
         <>
             <InputGroup className="mb-2.5 mt-3">
                 <InputGroup.Text id="basic-addon3">
-                    Feta JSON URL
+                    JSON URL
                 </InputGroup.Text>
                 <Form.Control 
                     id="basic-url" 
@@ -118,7 +118,7 @@ export default function TableDisplay({table, setTable}) {
                     type="button"
                     onClick={e => loadNewTable()}
                 >
-                    random
+                    Random
                 </button>
             </InputGroup>
 
@@ -134,7 +134,7 @@ export default function TableDisplay({table, setTable}) {
                     type="button"
                     onClick={e => upload()}
                 >
-                    upload
+                    Upload
                 </button>
             </div>
 
