@@ -102,7 +102,7 @@ export default function TableDisplay({table, setTable}) {
 
     return (
         <>
-            <InputGroup className="mb-3">
+            <InputGroup className="mb-2.5 mt-3">
                 <InputGroup.Text id="basic-addon3">
                     Feta JSON URL
                 </InputGroup.Text>
@@ -120,18 +120,24 @@ export default function TableDisplay({table, setTable}) {
                 >
                     random
                 </button>
-                <div className="file">
-                    <input type="file" id="file_upload" />
-                    <button 
-                        id="urlBtn" 
-                        className="btn btn-outline-secondary" 
-                        type="button"
-                        onClick={e => upload()}
-                    >
-                        upload
-                    </button>
-                </div>
             </InputGroup>
+
+            <div className="input-group mb-3">
+                <span className="input-group-prepend input-group-text">Upload file</span>
+                <div className="custom-file form-control">
+                    <label className="custom-file-label" for="file_upload">Choose file</label>
+                    <input type="file" className="custom-file-input hidden" id="file_upload" />
+                </div>
+                <button 
+                    id="urlBtn" 
+                    className="btn btn-outline-secondary w-20" 
+                    type="button"
+                    onClick={e => upload()}
+                >
+                    upload
+                </button>
+            </div>
+
             <div 
                 id="tableContainer"
                 className="
@@ -139,7 +145,7 @@ export default function TableDisplay({table, setTable}) {
                     overflow-auto
                 "
             >
-                <div>
+                <div id="tableBody">
                     {table &&
                     <table 
                         className="table-question-answering"
