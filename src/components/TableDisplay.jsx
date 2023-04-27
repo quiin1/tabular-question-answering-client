@@ -2,33 +2,38 @@ import {Form, InputGroup} from 'react-bootstrap'
 import '../styles/table.css'
 import * as XLSX from 'xlsx/xlsx.mjs'
 
-let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_dev.json'
+let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_test.json'
 
 async function randomTableArray(link) {
     let conn = await fetch(link);
     let data = await conn.json();
     let index = Math.round(Math.random() * data.data.length);
-    return data.data[index].table_array;
+    console.log(data.data[index])
+    return {
+        table: data.data[index].table_array, 
+        title: data.data[index].table_page_title
+    }
 }
 
-export default function TableDisplay({table, setTable}) {
+export default function TableDisplay({table, setTable, title, setTitle}) {
     function loadNewTable() {
-        randomTableArray(link).then((tableArray) => {
-            setTable(tableArray)
+        randomTableArray(link).then((table) => {
+            setTable(table.table)
+            setTitle(table.title)
         })
     }
 
     function upload() {
         var files = document.getElementById('file_upload').files;
-        if(files.length==0){
+        if(files.length === 0){
           alert("Please choose any file...");
           return;
         }
         var filename = files[0].name;
         var extension = filename.substring(filename.lastIndexOf(".")).toUpperCase();
-        if (extension == '.XLS' || extension == '.XLSX') {
+        if (extension === '.XLS' || extension === '.XLSX') {
             excelFileToJSON(files[0]);
-        }else if (extension == '.CSV') {
+        } else if (extension === '.CSV') {
             csvFileToJSON(files[0]);
         } else {
             alert("Please select a valid excel file.");
@@ -57,8 +62,8 @@ export default function TableDisplay({table, setTable}) {
                 const propertyNames = Object.values(result[i]);
                 resultEle.push(propertyNames);
             }
-            console.log(resultEle);
             setTable(resultEle);
+            setTitle(null)
         }
     }
 
@@ -70,7 +75,7 @@ export default function TableDisplay({table, setTable}) {
             var headers = [];
             var rows = e.target.result.split("\r\n");
             var cells = rows[0].split(",");   
-            for(var j=0;j<cells.length;j++){
+            for(var j = 0; j < cells.length; j++){
                 var headerName = cells[j].trim();
                 headers.push(headerName);
             }
@@ -78,25 +83,25 @@ export default function TableDisplay({table, setTable}) {
             for (var i = 1; i < rows.length; i++) {
                 cells = rows[i].split(",");
                 var rowData = {};
-                for(var j=0;j<cells.length;j++){
-                    if(i==0){
-                    var headerName = cells[j].trim();
+                for(var k = 0; k < cells.length; k++){
+                    if(i === 0){
+                    var headerName = cells[k].trim();
                     headers.push(headerName);
-                    }else{
-                        var key = headers[j];
+                    } else {
+                        var key = headers[k];
                         if(key){
-                            rowData[key] = cells[j].trim();
+                            rowData[key] = cells[k].trim();
                         }
                     }
                 }
-                if(i!=0){
+                if(i !== 0){
                     const propertyNames = Object.values(rowData);
                     jsonData.push(propertyNames);
                 }
             }
             jsonData.splice(jsonData.length - 1, 1);
-            console.log(jsonData);
             setTable(jsonData);
+            setTitle(null)
         }
     }
 
@@ -154,6 +159,11 @@ export default function TableDisplay({table, setTable}) {
                             if (index === 0) {
                                 return (
                                     <thead key={index}>
+                                    {title && 
+                                        <tr>
+                                            <th colspan={row.length + 1} className="text-center">{title}</th>
+                                        </tr>
+                                    }
                                         <tr>
                                             <th>#</th>
                                             {Array.from(row).map((heading, hindex) => (

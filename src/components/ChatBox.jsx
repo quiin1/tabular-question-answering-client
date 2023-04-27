@@ -13,13 +13,19 @@ function Messages( { conversation }) {
                                     <p className="text-sm" style={{margin: 0}}>{content}</p>
                                 </div>
                             </div>
-                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FblueAvatar.d858b62d.png&w=48&q=75"
+                                    style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
+                            </div>
                         </div>
                     )
                 } else {
                     return (
                         <div key={index} className="flex w-full mt-2 space-x-3 max-w-xs">
-                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
+                                        style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
+                            </div>
                             <div>
                                 <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
                                     <p className="text-sm" style={{margin: 0}}>{content}</p>
@@ -33,18 +39,25 @@ function Messages( { conversation }) {
     );
 }
 
-export default function ChatBox({table}) {
+export default function ChatBox({table, title}) {
     const [query, setQuery] = useState('')
     const [conversation, setConversation] = useState([])
 
     const handleChange = event => {
         setQuery(event.target.value)
     };
+
+    const resetConversation = () => {
+        setConversation([])
+    }
     const handleClick = () => {
         if (query !== "" && table) {
             let request = {
                 query: query,
                 table: table
+            }
+            if (title !== null) {
+                request.query = request.query + ' title: ' + title
             }
             predict(request).then(function(data) {
                 setConversation([...conversation, query, data[0]])
@@ -54,7 +67,7 @@ export default function ChatBox({table}) {
     }
     
     const handleKeyDown = (e) => {
-        if (e.key==='Enter') {
+        if (e.keyCode == 13 && !e.shiftKey) {
             e.preventDefault();
             handleClick()
         }
@@ -62,7 +75,7 @@ export default function ChatBox({table}) {
 
     return (
         <div 
-            style={{ height: '78.3vh' }}
+            style={{ height: '78.5vh' }}
             className="flex flex-col"
         >
             <Messages conversation={conversation} className="h-full"/>
@@ -87,6 +100,7 @@ export default function ChatBox({table}) {
                     rows="1" 
                     onChange={handleChange}
                     value={query}
+                    onKeyDown={e => handleKeyDown(e)}
                 >
                 </textarea>
                 <div className="flex ml-1 ms-auto">
@@ -106,7 +120,6 @@ export default function ChatBox({table}) {
                         data-state="closed"
                         onClick={handleClick}
                         tabIndex="0"
-                        onKeyDown={e => handleKeyDown(e)}
                     >
                         <svg 
                             xmlns="http://www.w3.org/2000/svg" 
@@ -137,6 +150,7 @@ export default function ChatBox({table}) {
                         " 
                         alt="Clear history" 
                         data-state="closed"
+                        onClick={resetConversation}
                     >
                         <svg 
                             xmlns="http://www.w3.org/2000/svg" 
