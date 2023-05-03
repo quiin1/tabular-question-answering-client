@@ -7,7 +7,7 @@ import WidgetGrid from "./components/WidgetGrid";
 function MyApp() {
   return (
     <>
-      <title>Tapex Chatbot</title>
+      <title>Query Chatbot</title>
       <meta
         httpEquiv="Content-Security-Policy"
         content="upgrade-insecure-requests"
@@ -17,7 +17,7 @@ function MyApp() {
           <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
               style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
           <div>
-            <p style={{marginBottom: 0, fontSize: '20px', fontWeight: 700}}>Tapex</p>
+            <p style={{marginBottom: 0, fontSize: '20px', fontWeight: 700}}>Query</p>
           </div>
         </div>
         <WidgetGrid />

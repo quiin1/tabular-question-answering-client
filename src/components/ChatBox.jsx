@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { predict } from '../response';
+import '../styles/chat.css'
 
-function Messages( { conversation }) {
+function Messages( { conversation, isLoading }) {
     return (
         <div className="flex flex-col flex-grow overflow-auto mt-2 py-4 px-2 rounded-md">
             {conversation.map((content, index) => {
@@ -21,27 +22,70 @@ function Messages( { conversation }) {
                     )
                 } else {
                     return (
-                        <div key={index} className="flex w-full mt-2 space-x-3 max-w-xs">
-                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                                <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
-                                        style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
-                            </div>
-                            <div>
-                                <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
-                                    <p className="text-sm" style={{margin: 0}}>{content}</p>
+                        <>
+                            {content.sql !== '' && content.output &&
+                            <>
+                                <div key={index + 'sql'} className="flex w-full mt-2 space-x-3 max-w-xs">
+                                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                        <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
+                                                style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
+                                    </div>
+                                    <div>
+                                        <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+                                            <p className="text-sm" style={{margin: 0}}>{"Query: " + content.sql}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div key={index + 'output'} className="flex w-full mt-2 space-x-3 max-w-xs">
+                                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                        <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
+                                                style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
+                                    </div>
+                                    <div>
+                                        <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+                                            <p className="text-sm" style={{margin: 0}}>{"Output: " + String(content.output)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                            }
+                            <div key={index + 'ans'} className="flex w-full mt-2 space-x-3 max-w-xs">
+                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                    <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
+                                            style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
+                                </div>
+                                <div>
+                                    <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+                                        <p className="text-sm" style={{margin: 0}}>{"Answer: " + content.answer}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     )
                 }
             })}
+            { isLoading &&
+                <div className="flex w-full mt-2 space-x-3 max-w-xs">
+                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                        <img alt="" src="https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FpurpleAvatar.d066304c.png&w=48&q=75"
+                                    style={{display: 'inline-block', borderRadius: '100%', marginRight: '8px'}}/>
+                    </div>
+                    <div>
+                        <div className="bg-gray-300 p-2 rounded-r-lg rounded-bl-lg">
+                            <div className="lds-ellipsis"><div></div><div></div><div></div></div>
+                        </div>
+                    </div>
+                </div>
+            }
+                
         </div>
     );
 }
 
-export default function ChatBox({table, title}) {
+export default function ChatBox({table, title, sql}) {
     const [query, setQuery] = useState('')
     const [conversation, setConversation] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleChange = event => {
         setQuery(event.target.value)
@@ -56,11 +100,24 @@ export default function ChatBox({table, title}) {
                 query: query,
                 table: table
             }
-            if (title !== null) {
-                request.query = request.query + ' title: ' + title
-            }
+            setConversation([...conversation, query])
+            setIsLoading(true)
             predict(request).then(function(data) {
-                setConversation([...conversation, query, data[0]])
+                setConversation([...conversation, query, data])
+                setIsLoading(false)
+            })
+            setQuery('')
+        }
+        if (query !== "" && sql) {
+            let request = {
+                query: query,
+                sql: sql
+            }
+            setConversation([...conversation, query])
+            setIsLoading(true)
+            predict(request).then(function(data) {
+                setConversation([...conversation, query, data])
+                setIsLoading(false)
             })
             setQuery('')
         }
@@ -78,7 +135,7 @@ export default function ChatBox({table, title}) {
             style={{ height: '78.5vh' }}
             className="flex flex-col"
         >
-            <Messages conversation={conversation} className="h-full"/>
+            <Messages conversation={conversation} isLoading={isLoading} className="h-full"/>
             <div className="flex justify-items-center items-center pt-3">
                 <textarea 
                     type="text" 

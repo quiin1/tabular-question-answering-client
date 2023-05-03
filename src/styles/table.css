@@ -21,3 +21,9 @@ table.table-question-answering td {
     border-width: 1px;
     padding: 0.5rem;
 }
+#tableContainer {
+    max-height: 100% !important;
+}
+.code-holder {
+    margin: 0em 0px !important;
+}

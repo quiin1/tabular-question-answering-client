@@ -1,27 +1,30 @@
 import {Form, InputGroup} from 'react-bootstrap'
 import '../styles/table.css'
 import * as XLSX from 'xlsx/xlsx.mjs'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_test.json'
+// let link = 'https://raw.githubusercontent.com/Yale-LILY/FeTaQA/main/end2end/data/fetaQA-v1_test.json'
 
-async function randomTableArray(link) {
-    let conn = await fetch(link);
-    let data = await conn.json();
-    let index = Math.round(Math.random() * data.data.length);
-    console.log(data.data[index])
-    return {
-        table: data.data[index].table_array, 
-        title: data.data[index].table_page_title
-    }
-}
+// async function randomTableArray(link) {
+//     let conn = await fetch(link);
+//     let data = await conn.json();
+//     let index = Math.round(Math.random() * data.data.length);
+//     console.log(data.data[index])
+//     return {
+//         table: data.data[index].table_array, 
+//         title: data.data[index].table_page_title
+//     }
+// }
 
-export default function TableDisplay({table, setTable, title, setTitle}) {
-    function loadNewTable() {
-        randomTableArray(link).then((table) => {
-            setTable(table.table)
-            setTitle(table.title)
-        })
-    }
+export default function TableDisplay({table, setTable, title, setTitle, sql, setSQL}) {
+
+    // function loadNewTable() {
+    //     randomTableArray(link).then((table) => {
+    //         setTable(table.table)
+    //         setTitle(table.title)
+    //     })
+    // }
 
     function upload() {
         var files = document.getElementById('file_upload').files;
@@ -35,8 +38,19 @@ export default function TableDisplay({table, setTable, title, setTitle}) {
             excelFileToJSON(files[0]);
         } else if (extension === '.CSV') {
             csvFileToJSON(files[0]);
-        } else {
+        } else if (extension === '.SQL') {
+            SQLToJSON(files[0])
+        }
+        else {
             alert("Please select a valid excel file.");
+        }
+    }
+
+    function SQLToJSON(file){
+        var reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function(e) {
+            setSQL(e.target.result)
         }
     }
 
@@ -104,10 +118,11 @@ export default function TableDisplay({table, setTable, title, setTitle}) {
             setTitle(null)
         }
     }
-
+    console.log(sql)
     return (
-        <>
-            <InputGroup className="mb-2.5 mt-3">
+        <div style={{ height: '78.5vh' }}
+        className="flex flex-col">
+            {/* <InputGroup className="mb-2.5 mt-3">
                 <InputGroup.Text id="basic-addon3">
                     JSON URL
                 </InputGroup.Text>
@@ -125,12 +140,12 @@ export default function TableDisplay({table, setTable, title, setTitle}) {
                 >
                     Random
                 </button>
-            </InputGroup>
+            </InputGroup> */}
 
-            <div className="input-group mb-3">
+            <div className="input-group mt-3">
                 <span className="input-group-prepend input-group-text">Upload file</span>
                 <div className="custom-file form-control">
-                    <label className="custom-file-label" for="file_upload">Choose file</label>
+                    <label className="custom-file-label" for="file_upload">File .xlss/.csv, .json or .sql</label>
                     <input type="file" className="custom-file-input hidden" id="file_upload" />
                 </div>
                 <button 
@@ -150,7 +165,17 @@ export default function TableDisplay({table, setTable, title, setTitle}) {
                     overflow-auto
                 "
             >
-                <div id="tableBody">
+                <div id="code-body">
+                    {
+                        sql && 
+                        <SyntaxHighlighter
+                            className="code-holder"
+                            children={sql.substr(0, 10000) + '...'}
+                            style={oneLight}
+                            language='sql'
+                            PreTag="div"
+                        />
+                    }
                     {table &&
                     <table 
                         className="table-question-answering"
@@ -190,6 +215,6 @@ export default function TableDisplay({table, setTable, title, setTitle}) {
                     }
                 </div>
             </div>
-        </>
+        </div>
     )
 }

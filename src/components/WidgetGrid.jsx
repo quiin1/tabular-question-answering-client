@@ -17,16 +17,24 @@ function CardSample({ title, children }) {
 export default function WidgetGrid() {
     const [table, setTable] = useState()
     const [title, setTitle] = useState()
+    const [sql, setSQL] = useState()
     return(
         <Row xs={1} md={2} className="g-3 px-3 overflow-hidden">
             <Col>
-                <CardSample title={"Table"}>
-                    <TableDisplay table={table} setTable={setTable} title={title} setTitle={setTitle}/>
+                <CardSample title={"Table/Database"}>
+                    <TableDisplay 
+                        table={table}
+                        setTable={setTable}
+                        title={title}
+                        setTitle={setTitle}
+                        sql={sql}
+                        setSQL={setSQL}
+                    />
                 </CardSample>
             </Col>
             <Col>
-                <CardSample title={"Chat"}>
-                    <ChatBox table={table} title={title}/>
+                <CardSample title={"Chat/Conversation"}>
+                    <ChatBox table={table} title={title} sql={sql}/>
                 </CardSample>
             </Col>
         </Row>
